@@ -71,7 +71,7 @@ function Users() {
         const usersCrop = paginate(sortedUsers, currentPage, pageSize);
 
         return (
-            <div className="d-flex container mt-4 mb-4">
+            <div className="d-flex mt-4">
 
                 {professions &&
                     <div className="d-flex flex-column flex-shrink-0 p-3">
