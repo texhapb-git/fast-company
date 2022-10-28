@@ -7,11 +7,13 @@ import PropTypes from "prop-types";
 import GroupList from "./groupList";
 import API from "../api";
 import _ from "lodash";
+import SearchBar from "./searchBar";
 
 function Users() {
     const [currentPage, setCurrentPage] = useState(1);
     const [professions, setProfessions] = useState();
     const [selectedProf, setSelectedProf] = useState();
+    const [searchValue, setSearchValue] = useState("");
     const [sortBy, setSortBy] = useState({ path: "name", order: "asc" });
     const [users, setUsers] = useState();
 
@@ -23,6 +25,10 @@ function Users() {
 
     useEffect(() => {
         setCurrentPage(1);
+
+        if (selectedProf) {
+            setSearchValue("");
+        }
     }, [selectedProf]);
 
     useEffect(() => {
@@ -57,15 +63,27 @@ function Users() {
         setSortBy(item);
     };
 
+    const handleSearchBar = (value) => {
+        clearFilter();
+        setSearchValue(value.toLowerCase());
+    };
+
     const clearFilter = () => {
         setCurrentPage(1);
         setSelectedProf();
     };
 
     if (users) {
-        const filteredUsers = selectedProf
-            ? users.filter(user => user.profession._id === selectedProf._id)
-            : users;
+        let filteredUsers = users;
+
+        if (selectedProf) {
+            filteredUsers = users.filter(user => user.profession._id === selectedProf._id);
+        }
+
+        if (searchValue) {
+            filteredUsers = users.filter(user => user.name.toLowerCase().includes(searchValue));
+        }
+
         const itemsCount = filteredUsers.length;
         const sortedUsers = _.orderBy(filteredUsers, [sortBy.path], [sortBy.order]);
         const usersCrop = paginate(sortedUsers, currentPage, pageSize);
@@ -87,6 +105,9 @@ function Users() {
                 <div className="d-flex flex-column">
 
                     <SearchStatus length={itemsCount} />
+
+                    <SearchBar onChangeValue={handleSearchBar} value={searchValue} />
+
                     {itemsCount > 0 && (
                         <>
                             <UsersTable users={usersCrop} onSort={handleSort} selectedSort={sortBy} onDelete={handleDelete} onBookmarkToggle={handleToggleBookmark} />
