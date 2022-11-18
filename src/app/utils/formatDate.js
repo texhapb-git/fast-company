@@ -29,7 +29,7 @@ function formatCommentDate(dateValue) {
     const daysDiff = Math.floor(hoursDiff / 24); // разница в днях
 
     if (daysDiff >= 1 && daysDiff < 365) {
-        return `${date.getDate()}.${(date.getMonth() + 1)}`;
+        return `${date.getDate()} ${date.toLocaleString("default", { month: "long" })}`;
     } else {
         return `${date.getDate()}.${(date.getMonth() + 1)}.${date.getFullYear()}`;
     }
