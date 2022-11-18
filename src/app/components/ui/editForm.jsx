@@ -120,6 +120,10 @@ const EditForm = ({ user }) => {
 
     const isValid = Object.keys(errors).length === 0;
 
+    const handleClick = () => {
+        history.push(`/users/${user._id}`);
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const isValid = validate();
@@ -141,8 +145,20 @@ const EditForm = ({ user }) => {
     return (
         <>
             {isShow &&
-                <div className="container mt-5">
+                <div className="container mt-5 position-relative">
+                    <button
+                        className="
+                                    position-absolute
+                                    top-0
+                                    start-0
+                                    btn btn-primary
+                                "
+                        onClick={handleClick}
+                    >
+                        &larr; Назад
+                    </button>
                     <div className="row">
+
                         <div className="col-md-6 offset-md-3 shadow p-4">
                             <form onSubmit={handleSubmit}>
                                 <TextField
