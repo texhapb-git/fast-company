@@ -1,56 +1,50 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import api from "../../api";
-import PropTypes from "prop-types";
 import { orderBy } from "lodash";
-import CommentsList from "../common/comments/commentsList";
-import CommentForm from "../common/comments/commentsForm";
+import React, { useEffect, useState } from "react";
+import api from "../../api";
+import { useParams } from "react-router-dom";
+import CommentsList, { AddCommentForm } from "../common/comments";
 
-const Comments = ({ userId }) => {
-    const params = useParams();
-
-    if (!userId) {
-        userId = params.userId;
-    }
-
-    const [loading, setLoading] = useState(false);
+const Comments = () => {
+    const { userId } = useParams();
     const [comments, setComments] = useState([]);
-
     useEffect(() => {
-        setLoading(true);
-        api.comments.fetchCommentsForUser(userId).then(data => {
-            setComments(data);
-            setLoading(false);
-        });
+        api.comments
+            .fetchCommentsForUser(userId)
+            .then((data) => setComments(data));
     }, []);
-
     const handleSubmit = (data) => {
-        const addData = { ...data, pageId: userId };
-        api.comments.add(addData).then(data => setComments(prevState => [...prevState, data]));
+        api.comments
+            .add({ ...data, pageId: userId })
+            .then((data) => setComments([...comments, data]));
     };
-
-    const handleRemove = (id) => {
-        api.comments.remove(id).then(id => {
-            setComments(prevState => prevState.filter(comment => comment._id !== id));
+    const handleRemoveComment = (id) => {
+        api.comments.remove(id).then((id) => {
+            setComments(comments.filter((x) => x._id !== id));
         });
     };
-
     const sortedComments = orderBy(comments, ["created_at"], ["desc"]);
-
     return (
         <>
-            <CommentForm userId={userId} onSubmit={handleSubmit} />
-
-            {loading
-                ? <p>loading...</p>
-                : <CommentsList comments={sortedComments} onRemove={handleRemove} />
-            }
+            <div className="card mb-2">
+                {" "}
+                <div className="card-body ">
+                    <AddCommentForm onSubmit={handleSubmit} />
+                </div>
+            </div>
+            {sortedComments.length > 0 && (
+                <div className="card mb-3">
+                    <div className="card-body ">
+                        <h2>Comments</h2>
+                        <hr />
+                        <CommentsList
+                            comments={sortedComments}
+                            onRemove={handleRemoveComment}
+                        />
+                    </div>
+                </div>
+            )}
         </>
     );
-};
-
-Comments.propTypes = {
-    userId: PropTypes.string
 };
 
 export default Comments;
