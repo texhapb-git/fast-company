@@ -1,26 +1,14 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Comment from "./comment";
+import PropTypes from "prop-types";
 
 const CommentsList = ({ comments, onRemove }) => {
-    return (
-        <div className="card mb-3">
-            <div className="card-body">
-                <h2>Comments</h2>
-                <hr />
-
-                {comments.length > 0
-                    ? comments.map((comment) => <Comment key={comment._id} {...comment} onRemove={onRemove} />)
-                    : <p>Нет комментариев</p>
-                }
-
-            </div>
-        </div>
-    );
+    return comments.map((comment) => (
+        <Comment key={comment._id} {...comment} onRemove={onRemove} />
+    ));
 };
-
 CommentsList.propTypes = {
-    comments: PropTypes.array.isRequired,
+    comment: PropTypes.array,
     onRemove: PropTypes.func
 };
 
